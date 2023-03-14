@@ -25,7 +25,7 @@ class UsersController extends Controller
     public function OfType($type)
     {
         $type = strtoupper($type);
-        $types = config('custom.users_type');
+        $types = config('custom.users_type'); //
         if(in_array($type, $types)){
             return $type;
         }
