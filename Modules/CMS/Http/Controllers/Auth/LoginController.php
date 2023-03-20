@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\JsonResponse;
 use App\Helpers\HttpRequests;
-
+use Illuminate\Database\Events\ModelsPruned;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 class LoginController extends Controller
 {
     use HttpRequests;
@@ -64,15 +66,16 @@ class LoginController extends Controller
     }
     public function login(Request $request)
     {
+        // dd(session()->get('_token'));
         $data = [
             'email' => $request->email,
             'password' => $request->password
         ];
 
         $conn = $this->post('auth/login', $data);
-        session(['api_token' => $conn['access_token']]);
-        if ($this->attemptLogin($request)) {
-            return $this->sendLoginResponse($request);
-        }
+        $user = new User($conn['data']['user']);
+        $auth = Auth::login($user);
+        // $request->session()->regenerate();
+        // return redirect()->route('cms::dashboard');
     }
 }

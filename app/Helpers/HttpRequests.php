@@ -11,7 +11,7 @@ use Illuminate\Auth\AuthenticationException;
 trait HttpRequests
 {
 
-    protected static $ApiBaseUrl = 'http://127.0.0.1:8000/api/'; // for test..
+    protected static $ApiBaseUrl = 'http://127.0.0.1:8000/api/cms'; // for test..
 
     protected static function bootHttpRequests()
     {
@@ -38,9 +38,13 @@ trait HttpRequests
     {
         $token = session()->get('api_token');
         try {
-            $response = Http::acceptJson()->withToken($token)->post(config('custom.ApiBaseUrl') . $url, $data);
+
+            // dd(config('app.api') . $url, $data);
+          $response = Http::post(config('app.api') . $url, $data);
+
+            // dd($response->body());
         } catch (\Exception $e) {
-            abort(503);
+            dd(abort(503));
         }
 
         if ($response->status() == 401 && !request()->routeIs('login')) {
